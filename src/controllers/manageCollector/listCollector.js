@@ -6,7 +6,7 @@ import authenticate from "../../middlewares/authenticate.js";
 import initaccountMaster from "../../models/accountMaster.js";
 const router = Router();
 import bcrypt from "bcrypt";
-export default router.get("/",authenticate, async (req, res) => {
+export default router.get("/", authenticate, async (req, res) => {
   try {
     if (req.user.role != ROLE.ADMIN) {
       return send(res, RESPONSE.ACCESS_DENIED);
@@ -18,6 +18,10 @@ export default router.get("/",authenticate, async (req, res) => {
       where: { is_active: STATE.ACTIVE, role: ROLE.COLLECTOR },
       attributes: ["user_id", "name", "phone"],
     });
+
+    if (data.length == 0) {
+      return send(res, setErrorResponseMsg(RESPONSE.NOT_FOUND, "collectors"));
+    }
 
     return send(res, RESPONSE.SUCCESS, data);
   } catch (error) {

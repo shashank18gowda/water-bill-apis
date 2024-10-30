@@ -14,6 +14,7 @@ export const PAY_STATUS = {
 };
 
 export const PAY_METHOD = {
+  PENDING: 0,
   INHAND: 1,
   ONLINE: 2,
 };

@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { send, setErrorResponseMsg } from "../../helper/responseHelper.js";
 import RESPONSE from "../../configs/global.js";
-import { ROLE } from "../../configs/constants.js";
+import { ROLE, STATE } from "../../configs/constants.js";
 import authenticate from "../../middlewares/authenticate.js";
 import initaccountMaster from "../../models/accountMaster.js";
 const router = Router();
 import bcrypt from "bcrypt";
-import { where } from "sequelize";
+
 // export default router.post("/",authenticate, async (req, res) => {
 //   try {
 //     if (req.user.role != ROLE.ADMIN) {
@@ -41,7 +41,7 @@ export default router.post("/", async (req, res) => {
     }
 
     const isPhoneExist = await accountMaster.findAll({
-      where: { phone: phone },
+      where: { phone: phone ,is_active:STATE.ACTIVE},
     });
 
     if (isPhoneExist.length > 0) {
