@@ -7,12 +7,13 @@ import initaccountMaster from "../../models/accountMaster.js";
 const router = Router();
 import bcrypt from "bcrypt";
 import { where } from "sequelize";
-export default router.post("/",authenticate, async (req, res) => {
+// export default router.post("/",authenticate, async (req, res) => {
+//   try {
+//     if (req.user.role != ROLE.ADMIN) {
+//       return send(res, RESPONSE.ACCESS_DENIED);
+//     }
+export default router.post("/", async (req, res) => {
   try {
-    if (req.user.role != ROLE.ADMIN) {
-      return send(res, RESPONSE.ACCESS_DENIED);
-    }
-
     const { name, phone, password } = req.body;
     const accountMaster = await initaccountMaster();
     if (!name || name == undefined) {
