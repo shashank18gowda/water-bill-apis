@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { send, setErrorResponseMsg } from "../../helper/responseHelper.js";
 import RESPONSE from "../../configs/global.js";
-import { ROLE, STATE } from "../../configs/constants.js";
+import { PAY_STATUS, ROLE, STATE } from "../../configs/constants.js";
 import authenticate from "../../middlewares/authenticate.js";
 import initcustomerModel from "../../models/customers.js";
 import initaccountMaster from "../../models/accountMaster.js";
@@ -13,7 +13,13 @@ export default router.get("/", authenticate, async (req, res) => {
     if (req.user.role != ROLE.COLLECTOR) {
       return send(res, RESPONSE.ACCESS_DENIED);
     }
+
+    let billQuery = { is_active: STATE.ACTIVE };
     const customer_id = req.query.customer_id;
+
+    req.query.pay_status != undefined
+      ? (billQuery.pay_status = Number(req.query.pay_status))
+      : (billQuery.pay_status = PAY_STATUS.PENDING);
 
     const customerModel = await initcustomerModel();
     const billModel = await initbillModel();
@@ -25,7 +31,7 @@ export default router.get("/", authenticate, async (req, res) => {
       includeArry = {
         model: billModel,
         as: "billInfo",
-        where: { is_active: STATE.ACTIVE },
+        where: billQuery,
         required: false,
         attributes: [
           "bill_id",

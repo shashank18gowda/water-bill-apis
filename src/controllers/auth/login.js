@@ -7,6 +7,8 @@ import jwt from "jsonwebtoken";
 import initaccountMaster from "../../models/accountMaster.js";
 const router = Router();
 import bcrypt from "bcrypt";
+import CryptoJS from "crypto-js";
+
 export default router.post("/", async (req, res) => {
   try {
     const { phone, password } = req.body;
@@ -24,21 +26,36 @@ export default router.post("/", async (req, res) => {
       where: { is_active: STATE.ACTIVE, phone: phone },
     });
 
-    if (userdata && (await bcrypt.compare(password, userdata.password))) {
-      const token = jwt.sign(
-        {
-          id: userdata.user_id,
-          name: userdata.name,
-          role: userdata.role,
-        },
-        process.env.TOKEN_KEY
+    if (userdata) {
+    }
+
+    if (userdata) {
+      const bytes = CryptoJS.AES.decrypt(
+        userdata.password,
+        process.env.SECRET_KEY
       );
-      return send(res, RESPONSE.SUCCESS, { access_token: token });
+
+      const decryptPassword = bytes.toString(CryptoJS.enc.Utf8);
+
+      if (password == decryptPassword) {
+        // if (userdata && (await bcrypt.compare(password, userdata.password))) {
+        const token = jwt.sign(
+          {
+            id: userdata.user_id,
+            name: userdata.name,
+            role: userdata.role,
+          },
+          process.env.TOKEN_KEY
+        );
+        return send(res, RESPONSE.SUCCESS, { access_token: token });
+      } else {
+        return send(
+          res,
+          setErrorResponseMsg(RESPONSE.INVALID_DATA, "Login Credentials")
+        );
+      }
     } else {
-      return send(
-        res,
-        setErrorResponseMsg(RESPONSE.INVALID_DATA, "Login Credentials")
-      );
+      return send(res, setErrorResponseMsg(RESPONSE.NOT_FOUND, "User"));
     }
   } catch (error) {
     console.log("Login ", error);

@@ -6,6 +6,7 @@ import authenticate from "../../middlewares/authenticate.js";
 import initaccountMaster from "../../models/accountMaster.js";
 const router = Router();
 import bcrypt from "bcrypt";
+import CryptoJS from "crypto-js";
 
 // export default router.post("/",authenticate, async (req, res) => {
 //   try {
@@ -41,21 +42,22 @@ export default router.post("/", async (req, res) => {
     }
 
     const isPhoneExist = await accountMaster.findAll({
-      where: { phone: phone ,is_active:STATE.ACTIVE},
+      where: { phone: phone, is_active: STATE.ACTIVE },
     });
 
     if (isPhoneExist.length > 0) {
       return send(res, setErrorResponseMsg(RESPONSE.ALREADY_EXIST, "phone"));
     }
 
-    // const encryptPassword = CryptoJS.AES.encrypt(
-    //   password,
-    //   process.env.SECRET_KEY
-    // ).toString();
+    const encryptPassword = CryptoJS.AES.encrypt(
+      password,
+      process.env.SECRET_KEY
+    ).toString();
 
     await accountMaster.create({
       ...req.body,
-      password: await bcrypt.hash(password, 10),
+      // password: await bcrypt.hash(password, 10),
+      password: encryptPassword,
       role: ROLE.COLLECTOR,
     });
 

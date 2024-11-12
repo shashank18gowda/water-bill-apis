@@ -25,6 +25,11 @@ const RESPONSE = {
     message: "not found",
   },
 
+  FIELDS_MISSING: {
+    code: 206,
+    message: "Some fields are missing",
+  },
+
   INVALID_TOKEN: {
     code: 400,
     message: "Invalid token",

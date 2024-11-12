@@ -20,7 +20,7 @@ const billSchema = {
     allowNull: false,
   },
   slab_type: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
   amount: {

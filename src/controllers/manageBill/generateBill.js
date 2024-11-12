@@ -18,7 +18,7 @@ export default router.post("/", authenticate, async (req, res) => {
       used_quantity,
       slab_type,
       amount,
-      pay_method,
+      // pay_method,
       year,
       month,
     } = req.body;
